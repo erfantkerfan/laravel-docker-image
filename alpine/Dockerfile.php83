@@ -1,0 +1,82 @@
+FROM alpine:3.21 AS base
+
+RUN apk update --allow-untrusted \
+  && apk add --no-cache --allow-untrusted \
+  php83 \
+  php83-common \
+  php83-bcmath \
+  php83-ctype \
+  php83-fileinfo \
+  php83-json \
+  php83-opcache \
+  php83-opcache \
+  php83-mbstring \
+  php83-openssl \
+  php83-pdo \
+  php83-tokenizer \
+  php83-simplexml \
+  php83-xml \
+  php83-xmlreader \
+  php83-xmlwriter \
+  php83-curl \
+  php83-dom \
+  php83-gd \
+  php83-iconv \
+  php83-intl \
+  php83-pcntl \
+  php83-phar \
+  php83-posix \
+  php83-fpm \
+  php83-zip \
+  php83-soap \
+  php83-pdo_mysql \
+  php83-pecl-redis \
+  php83-pecl-mongodb \
+  curl \
+  coreutils \
+  supercronic \
+  supervisor \
+  tzdata \
+  nginx
+
+RUN ln -sf /usr/bin/php83 /usr/bin/php
+
+RUN php83 -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+  && echo "$(curl 'https://composer.github.io/installer.sig')  composer-setup.php" | sha384sum -c - \
+  && php83 composer-setup.php \
+  && php83 -r "unlink('composer-setup.php');" \
+  && mv composer.phar /usr/local/bin/composer.phar \
+  && ln -sf /usr/local/bin/composer.phar /usr/local/bin/composer
+
+RUN cp /usr/share/zoneinfo/Asia/Tehran /etc/localtime
+ENV TZ=Asia/Tehran
+
+
+RUN mkdir -p /var/lib/nginx/tmp/ \
+    && chown -R 1001 /var/lib/nginx \
+    && chmod -R 755 /var/lib/nginx \
+    && mkdir -p /var/log/supervisord/
+
+RUN sed -E -i 's/^;?user\s?=.*/user = www-data/' /etc/php83/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?group\s?=.*/group = www-data/' /etc/php83/php-fpm.d/www.conf \
+    && sed -E -i 's|^;?listen\s?=.*|listen = /var/run/php-fpm.sock|' /etc/php83/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?listen.owner\s?=.*/listen.owner = www-data/' /etc/php83/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?listen.group\s?=.*/listen.group = www-data/' /etc/php83/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?clear_env\s?=.*/clear_env = no/' /etc/php83/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?catch_workers_output\s?=.*/catch_workers_output = yes/' /etc/php83/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?opcache.enable\s?=.*/opcache.enable=1/' /etc/php83/php.ini \
+    && sed -E -i 's/^;?opcache.enable_cli\s?=.*/opcache.enable_cli=1/' /etc/php83/php.ini \
+    && sed -E -i 's/^;?opcache.memory_consumption\s?=.*/opcache.memory_consumption=128/' /etc/php83/php.ini \
+    && sed -E -i 's/^;?opcache.interned_strings_buffer\s?=.*/opcache.interned_strings_buffer=64/' /etc/php83/php.ini \
+    && sed -E -i 's/^;?opcache.validate_timestamps\s?=.*/opcache.validate_timestamps=0/' /etc/php83/php.ini \
+    && sed -E -i 's/^;?expose_php\s?=.*/expose_php=Off/' /etc/php83/php.ini
+
+WORKDIR /var/www
+
+RUN adduser -S -u 1001 -G www-data www-data \
+    && chown -R www-data:www-data .
+
+RUN sed -E -i 's/^;?expose_php\s?=.*/expose_php=Off/' /etc/php83/php.ini \
+  && sed -E -i 's/^;?opcache.enable_cli\s?=.*/opcache.enable_cli=1/' /etc/php83/php.ini
+
+CMD echo 'Hello CHAD'

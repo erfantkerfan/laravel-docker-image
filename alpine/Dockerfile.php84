@@ -1,0 +1,84 @@
+FROM alpine:3.21 AS base
+
+RUN apk update --allow-untrusted \
+  && apk add --no-cache --allow-untrusted \
+  php84 \
+  php84-common \
+  php84-bcmath \
+  php84-ctype \
+  php84-fileinfo \
+  php84-json \
+  php84-opcache \
+  php84-opcache \
+  php84-mbstring \
+  php84-openssl \
+  php84-pdo \
+  php84-tokenizer \
+  php84-simplexml \
+  php84-xml \
+  php84-xmlreader \
+  php84-xmlwriter \
+  php84-curl \
+  php84-dom \
+  php84-gd \
+  php84-iconv \
+  php84-intl \
+  php84-pcntl \
+  php84-phar \
+  php84-posix \
+  php84-fpm \
+  php84-zip \
+  php84-soap \
+  php84-pdo_mysql \
+  php84-pecl-redis \
+  php84-pecl-mongodb \
+  curl \
+  coreutils \
+  supercronic \
+  supervisor \
+  tzdata \
+  nginx \
+  nodejs \
+  npm
+
+RUN ln -sf /usr/bin/php84 /usr/bin/php
+
+RUN php84 -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+  && echo "$(curl 'https://composer.github.io/installer.sig')  composer-setup.php" | sha384sum -c - \
+  && php84 composer-setup.php \
+  && php84 -r "unlink('composer-setup.php');" \
+  && mv composer.phar /usr/local/bin/composer.phar \
+  && ln -sf /usr/local/bin/composer.phar /usr/local/bin/composer
+
+RUN cp /usr/share/zoneinfo/Asia/Tehran /etc/localtime
+ENV TZ=Asia/Tehran
+
+
+RUN mkdir -p /var/lib/nginx/tmp/ \
+    && chown -R 1001 /var/lib/nginx \
+    && chmod -R 755 /var/lib/nginx \
+    && mkdir -p /var/log/supervisord/
+
+RUN sed -E -i 's/^;?user\s?=.*/user = www-data/' /etc/php84/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?group\s?=.*/group = www-data/' /etc/php84/php-fpm.d/www.conf \
+    && sed -E -i 's|^;?listen\s?=.*|listen = /var/run/php-fpm.sock|' /etc/php84/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?listen.owner\s?=.*/listen.owner = www-data/' /etc/php84/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?listen.group\s?=.*/listen.group = www-data/' /etc/php84/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?clear_env\s?=.*/clear_env = no/' /etc/php84/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?catch_workers_output\s?=.*/catch_workers_output = yes/' /etc/php84/php-fpm.d/www.conf \
+    && sed -E -i 's/^;?opcache.enable\s?=.*/opcache.enable=1/' /etc/php84/php.ini \
+    && sed -E -i 's/^;?opcache.enable_cli\s?=.*/opcache.enable_cli=1/' /etc/php84/php.ini \
+    && sed -E -i 's/^;?opcache.memory_consumption\s?=.*/opcache.memory_consumption=128/' /etc/php84/php.ini \
+    && sed -E -i 's/^;?opcache.interned_strings_buffer\s?=.*/opcache.interned_strings_buffer=64/' /etc/php84/php.ini \
+    && sed -E -i 's/^;?opcache.validate_timestamps\s?=.*/opcache.validate_timestamps=0/' /etc/php84/php.ini \
+    && sed -E -i 's/^;?expose_php\s?=.*/expose_php=Off/' /etc/php84/php.ini
+
+WORKDIR /var/www
+
+RUN adduser -S -u 1001 -G www-data www-data \
+    && chown -R www-data:www-data .
+
+RUN sed -E -i 's/^;?expose_php\s?=.*/expose_php=Off/' /etc/php84/php.ini \
+  && sed -E -i 's/^;?opcache.enable_cli\s?=.*/opcache.enable_cli=1/' /etc/php84/php.ini
+
+CMD echo 'Hello CHAD'
