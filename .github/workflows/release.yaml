@@ -29,6 +29,9 @@ jobs:
       packages: write
 
     steps:
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -45,4 +48,4 @@ jobs:
           context: .
           push: true
           file: ${{ matrix.dockerfile }}
-          tags: ${{ matrix.image }}
+          tags: ${{ matrix.image }},${{ matrix.image }}-${{ env.RELEASE_VERSION }}
