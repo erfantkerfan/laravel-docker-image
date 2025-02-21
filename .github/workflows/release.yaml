@@ -12,17 +12,17 @@ jobs:
       matrix:
         include:
           - dockerfile: ./alpine/Dockerfile.php82
-            image: ghcr.io//erfantkerfan/laravel-docker-image:php82
+            image: ghcr.io/erfantkerfan/laravel-docker-image:php82
           - dockerfile: ./alpine/Dockerfile.php82-node
-            image: ghcr.io//erfantkerfan/laravel-docker-image:php82-node
+            image: ghcr.io/erfantkerfan/laravel-docker-image:php82-node
           - dockerfile: ./alpine/Dockerfile.php83
-            image: ghcr.io//erfantkerfan/laravel-docker-image:php83
+            image: ghcr.io/erfantkerfan/laravel-docker-image:php83
           - dockerfile: ./alpine/Dockerfile.php83-node
-            image: ghcr.io//erfantkerfan/laravel-docker-image:php83-node
+            image: ghcr.io/erfantkerfan/laravel-docker-image:php83-node
           - dockerfile: ./alpine/Dockerfile.php84
-            image: ghcr.io//erfantkerfan/laravel-docker-image:php84
+            image: ghcr.io/erfantkerfan/laravel-docker-image:php84
           - dockerfile: ./alpine/Dockerfile.php84-node
-            image: ghcr.io//erfantkerfan/laravel-docker-image:php84-node
+            image: ghcr.io/erfantkerfan/laravel-docker-image:php84-node
     permissions:
       contents: read
       packages: write
