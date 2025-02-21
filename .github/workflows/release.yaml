@@ -45,5 +45,3 @@ jobs:
           push: true
           file: ${{ matrix.dockerfile }}
           tags: ${{ matrix.image }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
