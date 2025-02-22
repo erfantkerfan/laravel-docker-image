@@ -30,6 +30,7 @@ RUN apk update --allow-untrusted \
   php84-zip \
   php84-soap \
   php84-pdo_mysql \
+  php84-pdo_pgsql \
   php84-pecl-redis \
   php84-pecl-mongodb \
   curl \

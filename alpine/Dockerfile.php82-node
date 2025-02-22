@@ -29,6 +29,7 @@ RUN apk update --allow-untrusted \
   php82-fpm \
   php82-soap \
   php82-pdo_mysql \
+  php82-pdo_pgsql \
   php82-pecl-redis \
   php82-pecl-mongodb \
   curl \
