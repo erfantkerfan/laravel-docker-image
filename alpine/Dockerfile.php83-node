@@ -29,6 +29,7 @@ RUN apk update --allow-untrusted \
   php83-fpm \
   php83-zip \
   php83-soap \
+  php84-pecl-imagick \
   php83-pdo_mysql \
   php83-pdo_pgsql \
   php83-pecl-redis \
