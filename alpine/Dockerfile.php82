@@ -27,9 +27,10 @@ RUN apk update --allow-untrusted \
   php82-phar \
   php82-posix \
   php82-fpm \
-  php84-zip \
+  php82-zip \
   php82-soap \
-  php84-pecl-imagick \
+  php82-pecl-imagick \
+  php82-exif \
   php82-pdo_mysql \
   php82-pdo_pgsql \
   php82-pecl-redis \
